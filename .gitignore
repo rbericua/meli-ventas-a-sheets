@@ -1,0 +1,6 @@
+.venv
+google_creds/
+sales_db/
+src/__pycache__/
+src/tests/__pycache__/
+.env
