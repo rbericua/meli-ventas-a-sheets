@@ -124,21 +124,18 @@ def main(start: datetime, end: datetime) -> None:
 
         sales_df, cancellations_info_df = modify_sales_dataframe(sales_df, done_invoices, invoice_links)
         cancellations_df = create_cancellations_dataframe(cancellations_info_df, sheets_service, SPREADSHEET_ID, sheet_name, sheet_id, start)
-        try:
-            last_row_cancellations = len(cancellations_df) + 2
-        except TypeError:
-            pass
 
     sales = [[month_spanish.upper()]]
     sales.append(sales_df.columns.values.tolist())
     sales.extend(sales_df.values.tolist())
 
-    try:
+    if cancellations_df:
+        last_row_cancellations = len(cancellations_df) + 2
         cancellations = [cancellations_df.columns.values.tolist()]
         cancellations.extend(cancellations_df.values.tolist())
         write_to_sheet(sheets_service, SPREADSHEET_ID, sales, last_row_sales, sheet_name, cancellations, last_row_cancellations)
         format_sheet(sheets_service, SPREADSHEET_ID, last_row_sales, sheet_id, last_row_cancellations)
-    except AttributeError:
+    else:
         write_to_sheet(sheets_service, SPREADSHEET_ID, sales, last_row_sales, sheet_name)
         format_sheet(sheets_service, SPREADSHEET_ID, last_row_sales, sheet_id)
 
