@@ -129,7 +129,7 @@ def main(start: datetime, end: datetime) -> None:
     sales.append(sales_df.columns.values.tolist())
     sales.extend(sales_df.values.tolist())
 
-    if cancellations_df:
+    if cancellations_df is not None:
         last_row_cancellations = len(cancellations_df) + 2
         cancellations = [cancellations_df.columns.values.tolist()]
         cancellations.extend(cancellations_df.values.tolist())
