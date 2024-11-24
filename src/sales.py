@@ -13,7 +13,7 @@ BS_AS_TZ = ZoneInfo("America/Argentina/Buenos_Aires")
 def get_sales(s: requests.Session, user_id: int, start: datetime, end: datetime, offset: int = 0, cancelled: bool = False) -> list:
     url = "https://api.mercadolibre.com/orders/search"
     params = {"seller" : user_id,
-              "order.date_closed.from" : to_meli_date_format(start), # TODO: check whether date_created or date_closed is the right one
+              "order.date_closed.from" : to_meli_date_format(start), # TODO: date_created o date_closed?
               "order.date_closed.to": to_meli_date_format(end),
               "offset" : offset}
     
@@ -46,10 +46,10 @@ def create_record(s: requests.Session, user_id: int, start: datetime, end: datet
             cancelled = True if sale["status"] == "cancelled" else False
             cancellation_date = sale["cancel_detail"]["date"] if cancelled else None
             sale_date = sale["date_closed"]
-            product = sale["payments"][0]["reason"]
+            product = sale["order_items"][0]["item"]["title"]
             quantity = sale["order_items"][0]["quantity"]
             unit_price = sale["order_items"][0]["unit_price"]
-            shipping_cost = sale["payments"][0]["shipping_cost"]
+            shipping_cost = sale["paid_amount"] - sale["total_amount"] if not cancelled else sale["payments"][0]["shipping_cost"]
             total = sale["paid_amount"] if not cancelled else unit_price * quantity + shipping_cost
             
             buyer = get_buyer_info(s, id)
